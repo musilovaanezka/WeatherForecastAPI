@@ -8,9 +8,10 @@ namespace WeatherForecastAPI.Services
 	{
 		private readonly string _filePath;
 
-		public UserRepository(string filePath)
+		public UserRepository()
 		{
-			_filePath = filePath;
+			//_filePath = filePath;
+			_filePath = "../users.json";
 			if (!File.Exists(_filePath))
 			{
 				File.WriteAllText(_filePath, "[]");

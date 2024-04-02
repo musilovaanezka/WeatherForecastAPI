@@ -16,6 +16,8 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 	options.SerializerOptions.WriteIndented = true;
 });
 
+builder.Services.AddHttpClient();
+
 builder.Services.AddRepositories();
 
 var app = builder.Build();
