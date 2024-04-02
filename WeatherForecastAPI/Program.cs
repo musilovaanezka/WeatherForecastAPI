@@ -1,3 +1,6 @@
+using System.Text.Json.Serialization;
+using WeatherForecastAPI;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +9,16 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+	options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+	options.SerializerOptions.WriteIndented = true;
+});
+
+builder.Services.AddHttpClient();
+
+builder.Services.AddRepositories();
 
 var app = builder.Build();
 
