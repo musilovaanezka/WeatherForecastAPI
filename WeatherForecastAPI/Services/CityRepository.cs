@@ -1,6 +1,8 @@
 ﻿using WeatherForecastAPI.Interfaces;
 using WeatherForecastAPI.Model;
 using System.Text.Json;
+using System.Diagnostics.Metrics;
+using System.Xml.Linq;
 namespace WeatherForecastAPI.Services
 {
 	public class CityRepository : ICityRepository
@@ -49,7 +51,30 @@ namespace WeatherForecastAPI.Services
 			}
 		}
 
-		private List<City> GetAllCities()
+        public async Task<City> GetById(long id)
+        {
+            using (FileStream fs = File.OpenRead(_filePath))
+            {
+                using (JsonDocument doc = await JsonDocument.ParseAsync(fs))
+                {
+                    foreach (JsonElement el in doc.RootElement.EnumerateArray())
+                    {
+                        try
+                        {
+                            City c = JsonSerializer.Deserialize<City>(el);
+							if (c.Id == id) return c;
+                        }
+                        catch (JsonException ex)
+                        {
+                            Console.WriteLine($"Failed to parse JSON element: {ex.Message}");
+                        }
+                    }
+                }
+				return null;
+            }
+        }
+
+        private List<City> GetAllCities()
 		{
 			var json = File.ReadAllText(_filePath);
 			return JsonSerializer.Deserialize<List<City>>(json);

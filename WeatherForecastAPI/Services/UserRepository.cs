@@ -10,7 +10,6 @@ namespace WeatherForecastAPI.Services
 
 		public UserRepository()
 		{
-			//_filePath = filePath;
 			_filePath = "../users.json";
 			if (!File.Exists(_filePath))
 			{
@@ -18,16 +17,25 @@ namespace WeatherForecastAPI.Services
 			}
 		}
 
-		public void Add(User user)
+		public User Add(User user)
 		{
-			var users = GetAllUsers();
-			if (users.Any((u => u.Username == user.Username)))
+			try
 			{
-				throw new InvalidOperationException("Username already exists");
+				var users = GetAllUsers();
+				if (users.Any((u => u.Username == user.Username)))
+				{
+					return null;
+				}
+
+				users.Add(user);
+				File.WriteAllText(_filePath, JsonSerializer.Serialize(users));
+				return user;
+			}
+			catch (Exception ex)
+			{
+				return null;
 			}
 
-			users.Add(user);
-			File.WriteAllText(_filePath, JsonSerializer.Serialize(users));
 		}
 
 		public User GetUserByUsername(string username)

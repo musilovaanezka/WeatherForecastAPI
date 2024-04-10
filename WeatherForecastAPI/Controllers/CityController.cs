@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.Metrics;
+using System.Xml.Linq;
 using WeatherForecastAPI.Interfaces;
 using WeatherForecastAPI.Model;
 
@@ -31,5 +33,24 @@ namespace WeatherForecastAPI.Controllers
 				return BadRequest(ex.Message);
 			}
 		}
-	}
+
+        [HttpGet("{id}")]
+		public async Task<IActionResult> GetById(long id)
+		{
+            try
+            {
+                var city = await _cityRepository.GetById(id);
+				if (city == null)
+				{
+					return NotFound($"City with ID {id} not found");
+				}
+                return Ok(city);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{ex}");
+                return BadRequest(ex.Message);
+            }
+        }
+    }
 }

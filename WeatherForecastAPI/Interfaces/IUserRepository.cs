@@ -3,7 +3,7 @@ namespace WeatherForecastAPI.Interfaces
 {
 	public interface IUserRepository
 	{
-		public void Add(User user);
+		public User Add(User user);
 
 		public User GetUserByUsername(string username);
 

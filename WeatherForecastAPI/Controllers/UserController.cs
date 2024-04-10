@@ -23,12 +23,18 @@ namespace WeatherForecastAPI.Controllers
 		{
 			try
 			{
-				_userRepository.Add(user);
+				User response = _userRepository.Add(user);
+				if (response == null)
+				{
+                    return StatusCode(400, "An error occurred while processing your request");
+                }
+				return Ok(user);
 			} 
 			catch (Exception ex)
 			{
 				_logger.LogError($"{ex}");
-			}
+                return StatusCode(500, "An error occurred while processing your request");
+            }
 			return Ok();
 		}
 
@@ -40,15 +46,11 @@ namespace WeatherForecastAPI.Controllers
 				var userByUsername = _userRepository.GetUserByUsername(user.Username);
 				if (userByUsername != null && userByUsername.Password == user.Password)
 				{
-					return Ok("Login successful");
-				} 
-				else if (userByUsername == null)
-				{
-					return Unauthorized("Username does not exist");
+					return Ok(user);
 				} 
 				else
 				{
-					return Unauthorized("Wrong password");
+					return Unauthorized();
 				}
 			}
 			catch (Exception ex)
