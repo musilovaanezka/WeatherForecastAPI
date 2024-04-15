@@ -38,16 +38,18 @@ namespace WeatherForecaseAPITest
         {
             var mockFile = new Mock<IFile>();
             var filePath = "users2.json"; // Sample file path
-            mockFile.Setup(file => file.WriteAllText(filePath, It.IsAny<string>()));
-            var userRepository = new UserRepository(filePath);
+            if (File.Exists("users2.json")) File.Delete(filePath);
             var user = new User { Username = "testuser", Password = "testpassword" };
             var existingUsers = new List<User> { user };
+            var usersJson = JsonSerializer.Serialize(existingUsers);
+            File.WriteAllText(filePath, usersJson);
+;
+            var userRepository = new UserRepository(filePath);
 
-            mockFile.Setup(file => file.ReadAllText(filePath)).Returns(JsonSerializer.Serialize(existingUsers));
 
             var result = userRepository.Add(user);
 
-            Assert.Equal(result, null);
+            Assert.Equal(null, result);
         }
 
         [Fact]
@@ -55,13 +57,16 @@ namespace WeatherForecaseAPITest
         {
             // Arrange
             var mockFile = new Mock<IFile>();
-            var filePath = "users.json"; // Sample file path
-            var userRepository = new UserRepository(filePath);
+            var filePath = "users3.json"; // Sample file path
+            if (File.Exists("users3.json")) File.Delete(filePath);
             var user = new User { Username = "testuser", Password = "testpassword" };
             var existingUsers = new List<User> { user };
+            var usersJson = JsonSerializer.Serialize(existingUsers);
+            File.WriteAllText(filePath, usersJson);
 
             mockFile.Setup(file => file.ReadAllText(filePath)).Returns(JsonSerializer.Serialize(existingUsers));
 
+            var userRepository = new UserRepository(filePath);
             // Act
             var result = userRepository.GetUserByUsername("testuser");
 
@@ -76,10 +81,15 @@ namespace WeatherForecaseAPITest
             // Arrange
             var mockFile = new Mock<IFile>();
             var filePath = "users4.json"; // Sample file path
-            var userRepository = new UserRepository(filePath);
+            if (File.Exists("users4.json")) File.Delete(filePath);
+            var user = new User { Username = "testuser", Password = "testpassword" };
+            var existingUsers = new List<User> { user };
+            var usersJson = JsonSerializer.Serialize(existingUsers);
+            File.WriteAllText(filePath, usersJson);
             var username = "nonexistinguser";
+            var userRepository = new UserRepository(filePath);
 
-            mockFile.Setup(file => file.ReadAllText(filePath)).Returns("[]");
+            mockFile.Setup(file => file.ReadAllText(filePath)).Returns(JsonSerializer.Serialize(existingUsers));
 
             // Act
             var result = userRepository.GetUserByUsername(username);
@@ -93,18 +103,22 @@ namespace WeatherForecaseAPITest
         {
             // Arrange
             var mockFile = new Mock<IFile>();
-            var filePath = "users.json"; // Sample file path
+            var filePath = "users5.json"; // Sample file path
+            if (File.Exists("users5.json")) File.Delete(filePath);
+            var user = new User { Username = "testuser", Password = "testpassword" };
+            var existingUsers = new List<User> { user };
+            var usersJson = JsonSerializer.Serialize(existingUsers);
+            File.WriteAllText(filePath, usersJson);
             var userRepository = new UserRepository(filePath);
-            var user = new List<User> { new User { Username = "testuser", Password = "testpassword" } };
 
-            mockFile.Setup(file => file.ReadAllText(filePath)).Returns(JsonSerializer.Serialize(user));
+            mockFile.Setup(file => file.ReadAllText(filePath)).Returns(JsonSerializer.Serialize(existingUsers));
 
             // Act
             var result = userRepository.GetAllUsers();
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(user.First().Username, result.First().Username);
+            Assert.Equal(existingUsers.First().Username, result.First().Username);
         }
 
         [Fact]
@@ -112,11 +126,15 @@ namespace WeatherForecaseAPITest
         {
             // Arrange
             var mockFile = new Mock<IFile>();
-            var filePath = "users7.json"; // Sample file path
-            var userRepository = new UserRepository(filePath);
+            var filePath = "users6.json"; // Sample file path
+            if (File.Exists("users6.json")) File.Delete(filePath);
             var user = new User { Username = "testuser", Password = "testpassword" };
+            var existingUsers = new List<User> { user };
+            var usersJson = JsonSerializer.Serialize(existingUsers);
+            File.WriteAllText(filePath, usersJson);
+            var userRepository = new UserRepository(filePath);
 
-            mockFile.Setup(file => file.ReadAllText(filePath)).Returns("[]");
+            mockFile.Setup(file => file.ReadAllText(filePath)).Returns(JsonSerializer.Serialize(existingUsers));
             mockFile.Setup(file => file.WriteAllText(filePath, It.IsAny<string>()))
                 .Throws(new IOException("Simulated exception"));
 
