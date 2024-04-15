@@ -9,7 +9,6 @@ namespace WeatherForecastAPI
 		{
 			return services
 				.AddSingleton<IUserRepository, UserRepository>()
-				.AddSingleton<IWeatherService, WeatherService>()
 				.AddSingleton<ICityRepository, CityRepository>();
 		}
 	}
