@@ -16,6 +16,15 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 	options.SerializerOptions.WriteIndented = true;
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder
+            .WithOrigins("https://amusil-weather-forecast-app-5680ad7eaa2e.herokuapp.com/")
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
+
 builder.Services.AddHttpClient();
 
 builder.Services.AddRepositories();
