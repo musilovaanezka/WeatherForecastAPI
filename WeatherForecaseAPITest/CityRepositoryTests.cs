@@ -64,6 +64,121 @@ namespace WeatherForecaseAPITest
             Assert.NotNull(result);
             Assert.Empty(result);
         }
+        [Fact]
+        public async Task Get_ReturnsAllCities_WhenNoFiltersAreProvided()
+        {
+            // Arrange
+            var cityRepository = new CityRepository();
+
+            // Act
+            var result = await cityRepository.Get(null, null, null);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(209579, result.Count);
+        }
+
+        [Fact]
+        public async Task Get_ReturnsCitiesByCountry_WhenOnlyCountryIsProvided()
+        {
+            // Arrange
+            var cityRepository = new CityRepository();
+
+            // Act
+            var result = await cityRepository.Get(null, "CU", null);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.All(result, city => Assert.Equal("CU", city.Country));
+        }
+
+        [Fact]
+        public async Task Get_ReturnsEmptyList_WhenNoCitiesMatchFilters()
+        {
+            // Arrange
+            var cityRepository = new CityRepository();
+
+            // Act
+            var result = await cityRepository.Get("Nonexistent City", null, null);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public async Task Get_ReturnsCitiesByName_WhenOnlyNameIsProvided()
+        {
+            // Arrange
+            var cityRepository = new CityRepository();
+
+            // Act
+            var result = await cityRepository.Get("La Salud", null, null);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.All(result, city => Assert.Equal("La Salud", city.Name));
+        }
+
+        [Fact]
+        public async Task Get_ReturnsCitiesByState_WhenOnlyStateIsProvided()
+        {
+            // Arrange
+            var cityRepository = new CityRepository();
+
+            // Act
+            var result = await cityRepository.Get(null, null, "SomeState");
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.All(result, city => Assert.Equal("SomeState", city.State));
+        }
+
+        [Fact]
+        public async Task Get_ReturnsCitiesByCountryAndState_WhenCountryAndStateAreProvided()
+        {
+            // Arrange
+            var cityRepository = new CityRepository();
+
+            // Act
+            var result = await cityRepository.Get(null, "CU", "SomeState");
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.All(result, city => Assert.Equal("CU", city.Country));
+        }
+
+        [Fact]
+        public async Task Get_ReturnsCitiesByLat_WhenLatIsProvided()
+        {
+            // Arrange
+            var cityRepository = new CityRepository();
+            var targetLat = 22.871389;
+
+            // Act
+            var result = await cityRepository.Get(null, null, null);
+
+            // Assert
+            Assert.NotNull(result);
+            var cityWithTargetLat = result.FirstOrDefault(city => city.Coord.Lat == targetLat);
+            Assert.NotNull(cityWithTargetLat);
+        }
+
+        [Fact]
+        public async Task Get_ReturnsCitiesByLon_WhenLonIsProvided()
+        {
+            // Arrange
+            var cityRepository = new CityRepository();
+            var targetLon = -82.423889;
+
+            // Act
+            var result = await cityRepository.Get(null, null, null);
+
+            // Assert
+            Assert.NotNull(result);
+            var cityWithTargetLon = result.FirstOrDefault(city => city.Coord.Lon == targetLon);
+            Assert.NotNull(cityWithTargetLon);
+        }
     }
 
     public interface IFile
