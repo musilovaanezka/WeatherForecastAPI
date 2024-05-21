@@ -19,22 +19,15 @@ namespace WeatherForecastAPI.Services
 
 		public User Add(User user)
 		{
-			try
-			{
-				var users = GetAllUsers();
-				if (users.Any((u => u.Username == user.Username)))
-				{
-					return null;
-				}
-
-				users.Add(user);
-				File.WriteAllText(_filePath, JsonSerializer.Serialize(users));
-				return user;
-			}
-			catch (Exception ex)
+			var users = GetAllUsers();
+			if (users.Any((u => u.Username == user.Username)))
 			{
 				return null;
 			}
+
+			users.Add(user);
+			File.WriteAllText(_filePath, JsonSerializer.Serialize(users));
+			return user;
 
 		}
 

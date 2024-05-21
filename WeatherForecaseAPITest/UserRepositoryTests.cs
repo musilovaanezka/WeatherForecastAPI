@@ -144,5 +144,49 @@ namespace WeatherForecaseAPITest
             // Assert
             Assert.Equal(result, null);
         }
+
+        [Fact]
+        public void GetAllUsers_ReturnsEmptyList_WhenJsonIsEmpty()
+        {
+            // Arrange
+            var mockFile = new Mock<IFile>();
+            var filePath = "users7.json"; // Sample file path
+            if (File.Exists("users7.json")) File.Delete(filePath);
+            File.WriteAllText(filePath, "[]");
+            var userRepository = new UserRepository(filePath);
+
+            mockFile.Setup(file => file.ReadAllText(filePath)).Returns("[]");
+
+            // Act
+            var result = userRepository.GetAllUsers();
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public void GetAllUsers_ReturnsListOfUsers_WhenJsonIsNotEmpty()
+        {
+            // Arrange
+            var mockFile = new Mock<IFile>();
+            var filePath = "users8.json"; // Sample file path
+            if (File.Exists("users8.json")) File.Delete(filePath);
+            var user = new User { Username = "testuser", Password = "testpassword" };
+            var existingUsers = new List<User> { user };
+            var usersJson = JsonSerializer.Serialize(existingUsers);
+            File.WriteAllText(filePath, usersJson);
+            var userRepository = new UserRepository(filePath);
+
+            mockFile.Setup(file => file.ReadAllText(filePath)).Returns(usersJson);
+
+            // Act
+            var result = userRepository.GetAllUsers();
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Single(result);
+            Assert.Equal(user.Username, result.First().Username);
+        }
     }
 }
